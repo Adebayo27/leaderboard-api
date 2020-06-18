@@ -6,7 +6,7 @@ DOcumentation
 Endpoints
 
 1. Visiting the '/' endpoint returns the home page....yunno "Welcome to homepage" stuff
-2. Visiting the '/api/v1/{table}' endpoint returns all the data in the table
+2. Visiting the '/api/v1/table/{table}' endpoint returns all the data in the table
 3. Visiting the '/api/v1/{table}/{id}' endpoint returns all the data in the table of the set id
 4. Visiting the '/api/v1/submissions/track/{track}/{cohort}/{taskday}' endpoint returns submissions for a particular track for the current day
 5. Visiting the '/api/v1/submissions/old/track/{track}/{cohort}/{taskday}' endpoint returns submissions for a particular track for the previous days
