@@ -57,4 +57,19 @@ Endpoints
 		comment: the comments of the user
 		sub_date: the submission date
 	}
-	
+
+16. Visiting the "api/v1/login" endpoint verifies users. A post request should be made to access this endpoint
+	{
+		email: the email of the user,
+		password: the user password
+	}
+
+17. Visiting the '/api/v1/register' endpoint registers users. To access this, a POST request should be made with the following params
+	{
+		first_name: the users's first name,
+		last_name: the user's last name,
+		nickname: the user's nickname,
+		email: user's email,
+		password: user's password
+		phone: user's phone number
+	}	

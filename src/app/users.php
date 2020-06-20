@@ -29,6 +29,78 @@ $app->get('/', function (Request $request, Response $response, array $args) {
 
 //The version one of the API
 $app->group('/api/v1', function(){
+
+	//register
+	$this->post('/register', function (Request $request, Response $response, array $args)
+	{
+		$first = $request->getParam('first_name');
+		$last = $request->getParam('last_name');
+		$nickname = $request->getParam('nickname');
+		$email = $request->getParam('email');
+		$password = $request->getParam('password');
+		$password =  password_hash($password, PASSWORD_DEFAULT);
+		$phone = $request->getParam('phone');
+
+		// var_dump($password);
+
+		try {
+			$db = new db();
+			$pdo = $db->connect();
+			$sql = "SELECT `email` FROM `user` WHERE `email` = '$email'";
+			$stmt = $pdo->query($sql);
+			$registered = $stmt->fetchAll(PDO::FETCH_OBJ);
+			if(count($registered) < 1){
+				$sql = "INSERT INTO user(first_name, last_name, nickname, email, password, phone) VALUES(?,?,?,?,?,?)";
+				$pdo->prepare($sql)->execute([$first, $last, $nickname, $email, $password, $phone]);
+				$data = "{'notice': {'status': 'Registration complete'}}";
+				$pdo = null;
+				return $data;
+			}else{
+				$data = "{'notice': {'status': 'User with this email already exist'}}";
+				return $data;
+			}
+
+		} catch (PDOException $e) {
+			return '{message: {"resp": '.$e->getMessage().'}}';
+		}
+
+
+	});
+	//login endpoint
+	$this->post('/login', function(Request $request, Response $response, array $args){
+		$email = $request->getParam('email');
+		$password = $request->getParam('password');
+
+		try {
+			$db = new db();
+			$pdo = $db->connect();
+
+	        $sql = "SELECT * FROM user WHERE email = '$email'";
+	        $stmt = $pdo->query($sql);
+			$registered = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			foreach ($registered as $key) {
+				$hashed_pass = $key['password'];
+				$isAdmin = $key['isAdmin'];
+			}
+			if(count($registered) == 1 && password_verify($password, $hashed_pass)){
+				if ($isAdmin == 2) {
+					$data = "{'notice': {'status': 'Super Admin login'}}";
+				} elseif($isAdmin == 1) {
+					$data = "{'notice': {'status': 'Admin login'}}";
+				}else{
+					$data = "{'notice': {'status': 'User login'}}";
+				}
+			}else{
+				$data = "{'notice': {'status': 'Invalid email or password'}}";
+			}
+			
+			return $data;
+
+		} catch (PDOException $e) {
+			return '{message: {"resp": '.$e->getMessage().'}}';
+		}
+	});
+
 	//to get all the data in a table
 	$this->get('/table/{table}', function (Request $request, Response $response)
 	{
