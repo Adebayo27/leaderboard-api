@@ -343,13 +343,17 @@ $app->group('/api/v1', function(){
 			foreach ($result as $key) {
 				$nickname = $key['nickname'];
 		        $track = $key['track'];
+		        $nt = $nickname . $track;
+		        $avatar = 'https://robohash.org/'.$nt;
 		        $level = $key['level'];
 		        $score = $key['score'];
 		        $email = $key['email'];
 				$user = new User($nickname,$track,$level,$score,$email);
         		array_push($usersRanking,$user);	
 			}
-			return $usersRanking;
+			$data = json_encode(['notice' => ['status' => 1, 'data' => $usersRanking]], JSON_PRETTY_PRINT);
+
+			return $data;
 
         } catch (PDOException $e) {
 			return '{message: {"resp": '.$e->getMessage().'}}';

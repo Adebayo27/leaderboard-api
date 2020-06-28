@@ -37,7 +37,7 @@ Endpoints
 		}
 
 11. Visiting the '/api/v1/delete/{table}/{id}' endpoint deletes data of the specified id from the table.
-12. Visiting the '/api/v1/leaderboard' endpoint gets the leaderboad ranking (general ranking).
+12. Visiting the '/api/v1/leaderboard' endpoint gets the leaderboad ranking (general ranking including the avatars).
 13. Visiting the '/api/v1/leaderboard/{user}' endpoint gets the leaderboad ranking (general) of a particular user.
 14. Visiting the '/api/v1/user/update' endpoint updates the details of a user. To access the is endpoint, send a PUT request with the following params
 	{
