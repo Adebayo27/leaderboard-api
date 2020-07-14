@@ -10,7 +10,7 @@ Endpoints
 3. Visiting the '/api/v1/t/{table}/{id}' endpoint returns all the data in the table of the set id
 	Request https://30daysofcode.xyz/api/api/v1/t/table_name/id
 	Response 
-	{
+	// {
 	    "response": {
 	        "status": 1,
 	        "message": [
@@ -31,7 +31,7 @@ Endpoints
 	        ]
 	    }
 	}
-
+	//
 4. Visiting the '/api/v1/submissions/track/{track}/{cohort}/{taskday}' endpoint returns submissions for a particular track for the current day
 5. Visiting the '/api/v1/submissions/old/track/{track}/{cohort}/{taskday}' endpoint returns submissions for a particular track for the previous days
 6. Visiting the '/api/v1/submissions/update/{id}' endpoint updates the submission for a specified {id}. This is the endpoint for marking submissions 
