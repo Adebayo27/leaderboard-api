@@ -52,16 +52,17 @@ $app->group('/api/v1', function(){
 			if(count($registered) < 1){
 				$sql = "INSERT INTO user(first_name, last_name, nickname, email, password, phone) VALUES(?,?,?,?,?,?)";
 				$pdo->prepare($sql)->execute([$first, $last, $nickname, $email, $password, $phone]);
-				$data = "{'notice': {'status': 'Registration complete'}}";
+				$data = json_encode(['response' => ['status' => 1, 'message' => 'Registration complete']], JSON_PRETTY_PRINT);
 				$pdo = null;
 				return $data;
 			}else{
-				$data = "{'notice': {'status': 'User with this email already exist'}}";
+				$data = json_encode(['response' => ['status' => 0, 'message' => 'User with this email already exist']], JSON_PRETTY_PRINT);
 				return $data;
 			}
 
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => '0', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;	
 		}
 
 
@@ -84,20 +85,21 @@ $app->group('/api/v1', function(){
 			}
 			if(count($registered) == 1 && password_verify($password, $hashed_pass)){
 				if ($isAdmin == 2) {
-					$data = "{'notice': {'status': 'Super Admin login'}}";
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'Super Admin login']], JSON_PRETTY_PRINT);
 				} elseif($isAdmin == 1) {
-					$data = "{'notice': {'status': 'Admin login'}}";
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'Admin login']], JSON_PRETTY_PRINT);
 				}else{
-					$data = "{'notice': {'status': 'User login'}}";
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'User login']], JSON_PRETTY_PRINT);
 				}
 			}else{
-				$data = "{'notice': {'status': 'Invalid email or password'}}";
+				$data = json_encode(['response' => ['status' => '0', 'message' => 'Invalid email or password']], JSON_PRETTY_PRINT);
 			}
 			
 			return $data;
 
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -110,19 +112,20 @@ $app->group('/api/v1', function(){
 		try {
 			$db = new db();
 			$pdo = $db->connect();
-
 			$stmt = $pdo->query($sql);
-			$data  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
 			$pdo = null;
-			return json_encode($data);
+			return $data;
 			
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
 	//to get a particular data from a table
-	$this->get('/{table}/{id}', function (Request $request, Response $response)
+	$this->get('/t/{table}/{id}', function (Request $request, Response $response)
 	{
 		$id = $request->getAttribute('id');
 		$table = $request->getAttribute('table');
@@ -132,12 +135,14 @@ $app->group('/api/v1', function(){
 			$db = new db();
 			$pdo = $db->connect();
 			$stmt = $pdo->query($sql);
-			$data  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
 			$pdo = null;
-			return json_encode($data);
+			return $data;
 			
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -154,12 +159,13 @@ $app->group('/api/v1', function(){
 			$db = new db();
 			$pdo = $db->connect();
 			$stmt = $pdo->query($sql);
-			$submissions  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
 			$pdo = null;
-			$data = json_encode($submissions);
 			return $data;
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -176,18 +182,19 @@ $app->group('/api/v1', function(){
 			$pdo = $db->connect();
 
 			$stmt = $pdo->query($sql);
-			$submissions  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
 			$pdo = null;
-			$data = json_encode($submissions);
 			return $data;
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
 
 	//to update score
-	$this->put('/submissions/update/{id}', function (Request $request, Response $response, $args)
+	$this->put('/submissions/update/{id}', function (Request $request, Response $response, array $args)
 	{
 		$id = $request->getAttribute('id');
 		$point = $request->getParam('point');
@@ -198,11 +205,12 @@ $app->group('/api/v1', function(){
 			$pdo = $db->connect();
 			$sql = "UPDATE submissions SET `points` =?, feedback =? WHERE id =?";
 			$pdo->prepare($sql)->execute([$point, $feedback, $id]);
-			$data = "{'notice': {'status': 'Successfully marked'}}";
+			$data = json_encode(['response' => ['status' => 1, 'message' => 'Successfully marked']], JSON_PRETTY_PRINT);
 			$pdo = null;
 			return $data;
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -217,12 +225,13 @@ $app->group('/api/v1', function(){
 			$db = new db();
 			$pdo = $db->connect();
 			$stmt = $pdo->query($sql);
-			$submissions  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
 			$pdo = null;
-			$data = json_encode($submissions);
 			return $data;
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -238,12 +247,13 @@ $app->group('/api/v1', function(){
 			$db = new db();
 			$pdo = $db->connect();
 			$stmt = $pdo->query($sql);
-			$submissions  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
 			$pdo = null;
-			$data = json_encode($submissions);
 			return $data;
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -266,16 +276,18 @@ $app->group('/api/v1', function(){
 			if(count($uploaded) < 1){
 				$sql = "INSERT INTO task(task_day, track, task, level, cohort) VALUES(?,?,?,?,?)";
 				$pdo->prepare($sql)->execute([$day, $track, $task, $level, $cohort]);
-				$data = "{'notice': {'status': 'Task uploaded successfully'}}";
+				$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+				$data = json_encode(['response' => ['status' => 1, 'message' => 'Task uploaded successfully']], JSON_PRETTY_PRINT);
 				$pdo = null;
 				return $data;
 			}else{
-				$data = "{'notice': {'status': 'Task already uploaded, try editing it'}}";
+				$data = json_encode(['response' => ['status' => 1, 'message' => 'Task already uploaded, try editing it']], JSON_PRETTY_PRINT);
 				return $data;
 			}
 			
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 	//to edit task
@@ -293,12 +305,12 @@ $app->group('/api/v1', function(){
 
 			$sql = "UPDATE task SET task_day =?, track =?, task =?, level =? WHERE id =?";
 			$pdo->prepare($sql)->execute([$day, $track, $task, $level, $id]);
-			$data = "{'notice': {'status': 'Task edited successfully'}}";
+			$data = json_encode(['response' => ['status' => 1, 'message' => 'Task edited successfully']], JSON_PRETTY_PRINT);
 			$pdo = null;
 			return $data;
-			
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -314,20 +326,21 @@ $app->group('/api/v1', function(){
 
 			$sql = "DELETE FROM `$table` WHERE id =?";
 			$pdo->prepare($sql)->execute([$id]);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $table . ' deleted successfully']], JSON_PRETTY_PRINT);
 			$pdo = null;
-
-			$data = '{"notice": {"status": "'. $table . ' with id of ' . $id . ' deleted successfully"}}';
-			return $data;
-			
+			return $data;	
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
-	/** 
-		uSERS ENDPOINTS
-		
-	**/
+				/** 
+						uSERS ENDPOINTS 
+					
+				**/
+
+
 	//to get the leaderboard
 	$this->get('/leaderboard', function(Request $request, Response $response, array $args){
 		$usersRanking = [];
@@ -356,14 +369,14 @@ $app->group('/api/v1', function(){
 			return $data;
 
         } catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
         }
 
 	});
 
 	//to get the rank for a user for different tracks 
-	$this->get('/leaderboard/{user}', function(Request $request, Response $response, array $args){
-
+	$this->get('/ranking/{user}', function(Request $request, Response $response, array $args){
 		$user = $request->getAttribute('user');
 		$userr = $user . ".com";
 		$usersRanking = [];
@@ -387,16 +400,19 @@ $app->group('/api/v1', function(){
 				$user = new User($nickname,$track,$level,$score,$email);
         		array_push($usersRanking,$user);	
 			}
+			// var_dump($usersRanking); die;
 			foreach ($usersRanking as $key) {
 				$rank++;
 				if ($key->email == $userr) {
 					array_push($userRanking, ['track' => $key->track, 'score' =>$key->score, 'position' =>$rank]);
 				}
 			}
-			return $userRanking;
+			$data = json_encode(['response' => ['status' => '1', 'message' => $userRanking]], JSON_PRETTY_PRINT);
+			return $data;
 
         } catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
         }
 	});
 
@@ -405,20 +421,26 @@ $app->group('/api/v1', function(){
 		$first = $request->getParam('first_name');
 		$last = $request->getParam('last_name');
 		$email = $request->getParam('email');
-		$nick = $request->getParam('nick');
+		$nick = $request->getParam('nickname');
 				
 		try {
 			$db = new db();
 			$pdo = $db->connect();
 
-			$sql = "UPDATE user SET first_name = '$first', last_name = '$last', nickname = '$nick' WHERE email = '$email' ";
-			$pdo->prepare($sql)->execute();
-			$data = "{'notice': {'status': 'User with'. '$email' . 'Successfully marked'}}";
+			$sql = "UPDATE user SET first_name = ? , last_name = ?, nickname = ? WHERE email = ?";
+			$result = $pdo->prepare($sql)->execute([$first, $last, $nick, $email]);
+			if ($result == 1) {
+				$data = json_encode(['response' => ['status' => $result, 'message' => 'Updated successfully']], JSON_PRETTY_PRINT);
+			} else {
+				$data = json_encode(['response' => ['status' => $result, 'message' => 'Update not successfull']], JSON_PRETTY_PRINT);
+			}
+			
 			$pdo = null;
-			return json_encode($data);
+			return $data;
 			
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
@@ -444,16 +466,122 @@ $app->group('/api/v1', function(){
 			if(count($submitted) < 1){
 				$sql = "INSERT INTO submissions(user, track, url, task_day, comments, sub_date, cohort, level) VALUES(?,?,?,?,?,?,?,?)";
 				$pdo->prepare($sql)->execute([$user, $track, $url, $day, $comment, $sub_date, $cohort, $level]);
-				$data = "{'notice': {'status': 'Task submitted successfully'}}";
+				$data = json_encode(['response' => ['status' => 1, 'message' => 'Task submitted successfully']], JSON_PRETTY_PRINT);
 				$pdo = null;
-				echo $data;
+				return $data;
 			}else{
-				$data = "{'notice': {'status': 'Task already submitted for today, wait for next task'}}";
-				echo $data;
+				$data = json_encode(['response' => ['status' => 0, 'message' => 'Task already submitted for today, wait for next task']], JSON_PRETTY_PRINT);
+				return $data;
 			}
 			
 		} catch (PDOException $e) {
-			return '{message: {"resp": '.$e->getMessage().'}}';
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
+		}
+	});
+
+	//to get users submissions
+	$this->get('/user/submissions/{user}', function(Request $request, Response $response, array $args){
+		$userr = $request->getAttribute('user');
+		$user = $userr . ".com";
+
+        try {
+        	
+			$db = new db();
+			$pdo = $db->connect();
+    		$sql = "SELECT * FROM submissions WHERE user = '$user' ORDER BY `id` DESC";
+        	$stmt = $pdo->query($sql);
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
+			$pdo = null;
+			return $data;
+		} catch (PDOException $e) {
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
+		}
+	});
+
+	//To get tasks for a particular track and level on current day
+	$this->post('/task', function (Request $request, Response $response)
+	{
+		$cohort = $request->getParam('cohort');
+		$track = $request->getParam('track');
+		$level = $request->getParam('level');
+		$day = $request->getParam('day');
+		$sql = "SELECT task FROM task WHERE track = '$track' AND cohort = '$cohort' AND level = '$level' AND task_day = '$day'";
+
+		try {
+			$db = new db();
+			$pdo = $db->connect();
+			$stmt = $pdo->query($sql);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
+			$pdo = null;
+			return $data;
+		} catch (PDOException $e) {
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
+		}
+	});
+
+	//to edit submissions of unmarked tasks
+	$this->put('/user/submissions/update/{id}', function (Request $request, Response $response, array $args)
+	{
+		$id = $request->getAttribute('id');
+		$track = $request->getParam('track');
+		$level = $request->getParam('level');
+		$url = $request->getParam('url');
+		$comment = $request->getParam('comment');
+
+		try {
+			$db = new db();
+			$pdo = $db->connect();
+			$sql = "SELECT points FROM submissions WHERE id = '$id'";
+			$stmt = $pdo->query($sql);
+			$result  = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			if (count($result) > 0) {
+				foreach ($result as $key) {
+					$points = $key['points'];
+				}
+				if ($points == 0) {
+					$sql = "UPDATE submissions SET `track` =?, url =?, comments =?, level =? WHERE id =?";
+					$pdo->prepare($sql)->execute([$track, $url, $comment, $level, $id]);
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'Update successfull']], JSON_PRETTY_PRINT);
+				} else {
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'You cannot edit marked submissions']], JSON_PRETTY_PRINT);
+				}
+				
+			} else {
+				$data = json_encode(['response' => ['status' => 1, 'message' => 'Error']], JSON_PRETTY_PRINT);
+			}
+			
+			$pdo = null;
+			return $data;
+			
+			
+		} catch (PDOException $e) {
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
+		}
+	});
+
+	//to view submission
+	$this->get('/submissions/view/{id}', function (Request $request, Response $response)
+	{
+		$id = $request->getAttribute('id');
+		$sql = "SELECT * FROM submissions WHERE id = '$id'";
+
+		try {
+			$db = new db();
+			$pdo = $db->connect();
+			$stmt = $pdo->query($sql);
+			$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$data = json_encode(['response' => ['status' => 1, 'message' => $result]], JSON_PRETTY_PRINT);
+			$pdo = null;
+			return $data;
+		} catch (PDOException $e) {
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
 		}
 	});
 
