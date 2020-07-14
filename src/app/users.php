@@ -85,11 +85,11 @@ $app->group('/api/v1', function(){
 			}
 			if(count($registered) == 1 && password_verify($password, $hashed_pass)){
 				if ($isAdmin == 2) {
-					$data = json_encode(['response' => ['status' => 1, 'message' => 'Super Admin login']], JSON_PRETTY_PRINT);
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'Super Admin login', 'data' => $registered]], JSON_PRETTY_PRINT);
 				} elseif($isAdmin == 1) {
-					$data = json_encode(['response' => ['status' => 1, 'message' => 'Admin login']], JSON_PRETTY_PRINT);
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'Admin login', 'data' => $registered]], JSON_PRETTY_PRINT);
 				}else{
-					$data = json_encode(['response' => ['status' => 1, 'message' => 'User login']], JSON_PRETTY_PRINT);
+					$data = json_encode(['response' => ['status' => 1, 'message' => 'User login', 'data' => $registered]], JSON_PRETTY_PRINT);
 				}
 			}else{
 				$data = json_encode(['response' => ['status' => '0', 'message' => 'Invalid email or password']], JSON_PRETTY_PRINT);
