@@ -10,7 +10,7 @@ Endpoints
 3. Visiting the '/api/v1/t/{table}/{id}' endpoint returns all the data in the table of the set id
 	Request https://30daysofcode.xyz/api/api/v1/t/table_name/id
 	Response 
-	{
+	// {
 	    "response": {
 	        "status": 1,
 	        "message": [
@@ -31,7 +31,7 @@ Endpoints
 	        ]
 	    }
 	}
-
+	//
 4. Visiting the '/api/v1/submissions/track/{track}/{cohort}/{taskday}' endpoint returns submissions for a particular track for the current day
 5. Visiting the '/api/v1/submissions/old/track/{track}/{cohort}/{taskday}' endpoint returns submissions for a particular track for the previous days
 6. Visiting the '/api/v1/submissions/update/{id}' endpoint updates the submission for a specified {id}. This is the endpoint for marking submissions 
@@ -68,6 +68,8 @@ Endpoints
 										//					//
 12. Visiting the '/api/v1/leaderboard' endpoint gets the leaderboad ranking (general ranking including the avatars). A get request is made
 	The response looks like this
+	
+	
 	{
 	    "notice": {
 	        "status": 1,
@@ -100,15 +102,17 @@ Endpoints
 	                "score": "100",
 	                "email": "xxxxx@gmail.com"
 	            }
-	            
 	        ]
 	    }
 	}
+	
 	
 
 13. Visiting the '/api/v1/ranking/{user}' endpoint gets the leaderboad ranking (general) of a particular user.
 	Request https://30daysofcode.xyz/api/api/v1/ranking/{user email without the '.com' e.g john@gmail}	
 	This is the resulting response
+	
+	
 	{
 	    "response": {
 	        "status": "x",
@@ -161,6 +165,7 @@ Endpoints
         	"message": "Task submitted successfully" //error if not successful
     	}
 	}
+
 
 16. Visiting the "api/v1/login" endpoint verifies users. A post request should be made to access this endpoint
 	{
