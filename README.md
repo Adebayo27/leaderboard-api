@@ -55,18 +55,18 @@ Endpoints
 		cohort: current cohort
 	}
 	```
-10. Visiting the '/api/v1/task/edit/{id}' endpoint updates the task for a specified {id}. This is the endpoint for updating task
-	To access this endpoint, a PUT request should be made with the following params.
-		```
-		{
-			task_day: the task day,
-			track: the prefferd track,
-			task: the task,
-			level: the level of the task e.g beginner, intermediate
-			cohort: current cohort
-		}
-		
-		```
+10. Visiting the '/api/v1/task/edit/{id}' endpoint updates the task for a specified {id}. This is the endpoint for updating task. To access this endpoint, a PUT request should be made with the following params.
+	```
+	{
+		task_day: the task day,
+		track: the prefferd track,
+		task: the task,
+		level: the level of the task e.g beginner, intermediate
+		cohort: current cohort
+	
+	}
+	```
+	
 
 11. Visiting the '/api/v1/delete/{table}/{id}' endpoint deletes data of the specified id from the table.
 
