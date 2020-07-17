@@ -198,7 +198,7 @@ Endpoints
 	    }
 	}
 	```
-
+	
 17. Visiting the '/api/v1/register' endpoint registers users. To access this, a POST request should be made with the following params
 	```
 	{

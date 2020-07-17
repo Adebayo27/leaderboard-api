@@ -585,6 +585,66 @@ $app->group('/api/v1', function(){
 		}
 	});
 
+	//to get the filtered leaderboard
+	$this->get('/leaderboard/{track}/{level}', function(Request $request, Response $response, array $args){
+		$usersRanking = [];
+		$track = $request->getAttribute('track');
+		$level = $request->getAttribute('level');
+
+
+        try {
+        	
+			$db = new db();
+			$pdo = $db->connect();
+    		
+			function makeSQL($track,$level){
+			  if ($level == 'beginner' || $level == 'intermediate') {
+			    $sql = "SELECT * FROM leaderboard WHERE `track` = '$track' AND `level`='$level' ORDER BY `score` DESC LIMIT 20";
+			  }elseif ($track == 'general' && $level !== 'general') {
+			    $sql = "SELECT * FROM leaderboard WHERE `level`='$level' ORDER BY `score` DESC LIMIT 20";
+			  }elseif ($level == 'general' && $track !== 'general') {
+			    $sql = "SELECT * FROM leaderboard WHERE `track` = '$track' ORDER BY `score` DESC LIMIT 20";
+			  }else {
+			    $sql = "SELECT * FROM leaderboard ORDER BY `score` DESC LIMIT 20";
+			  }
+
+			  return $sql;
+			}
+			//categories for filter 
+			if ($track !== 'general') {
+				$sql = makeSQL($track,$level);
+			}elseif($track == 'general'){
+				$sql = makeSQL('general',$level);
+			}else {
+				$sql = makeSQL('general','general');
+			}
+
+			// $sql = makeSQL('backend', 'beginner');
+
+			$stmt = $pdo->query($sql);
+			$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			foreach ($result as $key) {
+				$nickname = $key['nickname'];
+		        $track = $key['track'];
+		        $nt = $nickname . $track;
+		        $avatar = 'https://robohash.org/'.$nt;
+		        $level = $key['level'];
+		        $score = $key['score'];
+		        $email = $key['email'];
+				$user = new User($nickname,$track,$level,$score,$email);
+        		array_push($usersRanking,$user);	
+			}
+			$data = json_encode(['notice' => ['status' => 1, 'data' => $usersRanking]], JSON_PRETTY_PRINT);
+
+			return $data;
+			
+        } catch (PDOException $e) {
+			$data = json_encode(['response' => ['status' => 'x', 'message' => $e->getMessage()]], JSON_PRETTY_PRINT);
+			return $data;
+        }
+
+	});
+
 
 });
 
